@@ -84,7 +84,14 @@ def run_test(level, on_terminal=False, runcov=False):
     return base
 
   def easytest_pytest_syntax(cls_name, def_name):
-    base = "pytest %"
+    file_path = vim.eval("@%")
+    base = "pytest "
+    if level != 'all':
+      if level == 'package':
+        file_path = file_path.rpartition('/')[0]
+      base += file_path
+    if level == 'file':
+      return base
     names = [nn for nn in [cls_name, def_name] if nn]
 
     if names:
