@@ -55,6 +55,11 @@ This are all possible functions to execute. I hope the names are self explanator
     run_current_class_on_terminal()
     run_current_file()
     run_current_file_on_terminal()
+    run_current_package()
+    run_current_package_on_terminal()
+    run_all_tests()
+    run_all_tests_on_terminal()
+    run_last_test()
 
 ## Tips & Tricks
 
