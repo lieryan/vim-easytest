@@ -50,10 +50,15 @@ def run_all_tests_on_terminal():
 
 def run_last_test(on_terminal=False):
   command = vim.vars.get("easytest_last_command")
-  if on_terminal:
-    vim.command('Start ' + command)
+  if command:
+    if isinstance(command, bytes):
+      command = command.decode()
+    if on_terminal:
+      vim.command('Start ' + command)
+    else:
+      vim.command("Dispatch " + command)
   else:
-    vim.command("Dispatch " + command)
+    vim.command("echo 'no saved test run'")
 
 def run_test(level, on_terminal=False, runcov=False):
   import vim
