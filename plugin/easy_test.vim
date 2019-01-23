@@ -48,7 +48,14 @@ def run_all_tests():
 def run_all_tests_on_terminal():
   run_test('all', on_terminal=True)
 
-def run_test(level, on_terminal=False):
+def run_last_test(on_terminal=False):
+  command = vim.vars.get("easytest_last_command")
+  if on_terminal:
+    vim.command('Start ' + command)
+  else:
+    vim.command("Dispatch " + command)
+
+def run_test(level, on_terminal=False, runcov=False):
   import vim
 
   def easytest_django_syntax(cls_name, def_name):
@@ -128,6 +135,8 @@ def run_test(level, on_terminal=False):
     def_name = None
 
   command = func(cls_name, def_name)
+  vim.command(f"let g:easytest_last_command = '{command}'")
+
   cw.cursor = original_position
   vim.command("let @/ = ''")  # clears search
   if on_terminal:
