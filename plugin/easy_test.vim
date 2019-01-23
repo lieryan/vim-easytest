@@ -18,6 +18,8 @@
 " }}}
 
 pythonx << endpython
+import subprocess
+
 def run_current_test():
   run_test('test')
 
@@ -60,13 +62,21 @@ def run_last_test(on_terminal=False):
   else:
     vim.command("echo 'no saved test run'")
 
+def is_breakpoint_enabled():
+  cmd = ['grep', 'from \\(IPython\\|pdb\\|pudb\\|rpudb\\) import', '--binary-file=without-match', '--line-number', '--recursive', '.']
+  return subprocess.call(cmd, stdout=subprocess.PIPE) == 0
+
 def run_test(level, on_terminal=False, runcov=False):
   import vim
 
   def easytest_django_syntax(cls_name, def_name):
     base = "./manage.py test "
+    if level in parallel_levels and not has_breakpoint:
+      base += '--parallel '
     if level == 'all':
       return base
+
+    base += '-- ' # separator between options and test names
 
     file_path = vim.eval("@%").replace('.py', '').replace("/", '.')
     if level == 'package':
@@ -91,6 +101,10 @@ def run_test(level, on_terminal=False, runcov=False):
   def easytest_pytest_syntax(cls_name, def_name):
     file_path = vim.eval("@%")
     base = "pytest "
+    if level in parallel_levels and not has_breakpoint:
+      base += '--numprocesses=auto --dist=loadfile '
+    else:
+      base += '--numprocesses=0 --dist=no '
     if level != 'all':
       if level == 'package':
         file_path = file_path.rpartition('/')[0]
@@ -113,6 +127,8 @@ def run_test(level, on_terminal=False, runcov=False):
       base += " -n " + def_name
 
     return base
+
+  parallel_levels = vim.vars.get("easytest_parallel_levels", [])
 
   cb = vim.current.buffer
   cw = vim.current.window
@@ -146,6 +162,7 @@ def run_test(level, on_terminal=False, runcov=False):
     cls_name = None
     def_name = None
 
+  has_breakpoint = is_breakpoint_enabled()
   command = func(cls_name, def_name)
   vim.command(f"let g:easytest_last_command = '{command}'")
 

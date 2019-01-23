@@ -47,7 +47,7 @@ Currently there is no default mapping so everyone can just map it however they w
     nmap <leader>c :py run_current_class()<CR>
     nmap <D-t> :py run_current_file()<CR>
 
-This are all possible functions to execute. I hope the names are self explanatory enough:
+These are all possible functions to execute. I hope the names are self explanatory enough:
 
     run_current_test()
     run_current_test_on_terminal()
@@ -60,6 +60,22 @@ This are all possible functions to execute. I hope the names are self explanator
     run_all_tests()
     run_all_tests_on_terminal()
     run_last_test()
+
+### Parallel test
+
+Parallelization is currently supported for easytest_django_syntax and easytest_pytest_syntax. 
+
+You can set the test level where parallelization is enabled using:
+
+  let g:easytest_parallel_levels = ["all", "package"]
+
+will enable parallelization for run_all_tests() and run_current_package(), but
+run serially on run_current_file(), run_current_class(), and
+run_current_test().
+
+vim-easytest will try to automatically detect if you set breakpoints using pdb,
+pudb, rpudb, or IPython and will automatically disable parallel test. Not all
+dispatch handler supports interactive breakpoint.
 
 ## Tips & Tricks
 
